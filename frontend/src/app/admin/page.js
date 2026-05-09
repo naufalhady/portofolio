@@ -31,21 +31,29 @@ function ProfileTab() {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
+    setError(null);
     authedFetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/profile`)
       .then((res) => {
         if (res.status === 'success') {
           const d = res.data;
           setForm({ name: d.name || '', tagline: d.tagline || '', bio: d.bio || '', location: d.location || '', email: d.email || '', github: d.github || '', linkedin: d.linkedin || '' });
+        } else {
+          setError(res.message || 'Failed to load profile');
         }
       })
-      .catch(() => {})
+      .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   }, []);
 
   if (loading) {
     return <div className="text-slate-500 text-sm animate-pulse">Loading profile...</div>;
+  }
+
+  if (error) {
+    return <p className="text-red-400 text-sm">Error: {error}</p>;
   }
 
   async function handleSave(e) {
@@ -88,24 +96,23 @@ function SkillsTab() {
   const [skills, setSkills] = useState([]);
   const [newSkill, setNewSkill] = useState('');
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
+    setError(null);
     authedFetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/skills`)
-      .then((res) => { if (res.status === 'success') setSkills(res.data); })
-      .catch(() => {})
+      .then((res) => { if (res.status === 'success') setSkills(res.data); else setError(res.message || 'Failed to load skills'); })
+      .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
   }, []);
 
-  async function addSkill() {
-    if (!newSkill.trim()) return;
-    const res = await authedFetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/skills`, {
-      method: 'POST',
-      body: JSON.stringify({ name: newSkill }),
-    });
-    if (res.status === 'success') {
-      setSkills([...skills, res.data]);
-      setNewSkill('');
-    }
+  if (loading) {
+    return <div className="text-slate-500 text-sm animate-pulse">Loading skills...</div>;
+  }
+
+  if (error) {
+    return <p className="text-red-400 text-sm">Error: {error}</p>;
+  }
   }
 
   async function deleteSkill(id) {
@@ -144,11 +151,28 @@ function ProjectsTab() {
   const [editing, setEditing] = useState(null);
   const [form, setForm] = useState({ title: '', description: '', tagsInput: '' });
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   function resetForm() {
     setForm({ title: '', description: '', tagsInput: '' });
     setEditing(null);
     setShowForm(false);
+  }
+
+  useEffect(() => {
+    setError(null);
+    authedFetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/projects`)
+      .then((res) => { if (res.status === 'success') setProjects(res.data); else setError(res.message || 'Failed to load projects'); })
+      .catch((err) => setError(err.message))
+      .finally(() => setLoading(false));
+  }, []);
+
+  if (loading) {
+    return <div className="text-slate-500 text-sm animate-pulse">Loading projects...</div>;
+  }
+
+  if (error) {
+    return <p className="text-red-400 text-sm">Error: {error}</p>;
   }
 
   useEffect(() => {
