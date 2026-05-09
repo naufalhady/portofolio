@@ -3,6 +3,17 @@
 use Illuminate\Support\Str;
 use Pdo\Mysql;
 
+$dbPath = env('DB_DATABASE', database_path('database.sqlite'));
+if (env('DB_CONNECTION', 'sqlite') === 'sqlite'
+    && !str_starts_with($dbPath, '/dev/')
+    && !file_exists($dbPath)) {
+    $dir = dirname($dbPath);
+    if (!is_dir($dir)) {
+        mkdir($dir, 0755, true);
+    }
+    touch($dbPath);
+}
+
 return [
 
     /*
