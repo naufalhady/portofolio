@@ -13,6 +13,7 @@ function authedFetch(url, options = {}) {
     ...options,
     headers: {
       'Content-Type': 'application/json',
+      Accept: 'application/json',
       Authorization: `Bearer ${token}`,
       ...options.headers,
     },
@@ -113,15 +114,19 @@ function SkillsTab() {
   if (error) {
     return <p className="text-red-400 text-sm">Error: {error}</p>;
   }
-  }
 
   async function deleteSkill(id) {
     const res = await authedFetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/skills/${id}`, { method: 'DELETE' });
     if (res.status === 'success') setSkills(skills.filter((s) => s.id !== id));
   }
 
-  if (loading) {
-    return <div className="text-slate-500 text-sm animate-pulse">Loading skills...</div>;
+  async function addSkill() {
+    if (!newSkill.trim()) return;
+    const res = await authedFetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/skills`, { method: 'POST', body: JSON.stringify({ name: newSkill.trim() }) });
+    if (res.status === 'success') {
+      setSkills([...skills, res.data]);
+      setNewSkill('');
+    }
   }
 
   return (
@@ -175,13 +180,6 @@ function ProjectsTab() {
     return <p className="text-red-400 text-sm">Error: {error}</p>;
   }
 
-  useEffect(() => {
-    authedFetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/projects`)
-      .then((res) => { if (res.status === 'success') setProjects(res.data); })
-      .catch(() => {})
-      .finally(() => setLoading(false));
-  }, []);
-
   async function handleSubmit(e) {
     e.preventDefault();
     const tags = form.tagsInput.split(',').map((t) => t.trim()).filter(Boolean);
@@ -208,10 +206,6 @@ function ProjectsTab() {
   async function deleteProject(id) {
     const res = await authedFetch(`${process.env.NEXT_PUBLIC_API_URL}/admin/projects/${id}`, { method: 'DELETE' });
     if (res.status === 'success') setProjects(projects.filter((p) => p.id !== id));
-  }
-
-  if (loading) {
-    return <div className="text-slate-500 text-sm animate-pulse">Loading projects...</div>;
   }
 
   return (
