@@ -1,0 +1,11 @@
+node_modules/
+.next/
+out/
+vendor/
+.env
+.env.local
+database/database.sqlite
+storage/
+bootstrap/cache/
+.DS_Store
+*.log
