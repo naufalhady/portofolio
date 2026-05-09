@@ -236,6 +236,7 @@ function ProjectsTab() {
 export default function AdminDashboard() {
   const [state, setState] = useState('loading');
   const [activeTab, setActiveTab] = useState('profile');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem('admin_token');
@@ -266,39 +267,59 @@ export default function AdminDashboard() {
   }
 
   const tabs = [
-    { key: 'profile', label: 'Profile' },
-    { key: 'skills', label: 'Skills' },
-    { key: 'projects', label: 'Projects' },
+    { key: 'profile', label: 'Profile', icon: 'M16 7a4 4 0 11-8 0 4 4 0 018 0zm-4 7a7 7 0 00-7 7h14a7 7 0 00-7-7z' },
+    { key: 'skills', label: 'Skills', icon: 'M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z' },
+    { key: 'projects', label: 'Projects', icon: 'M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z' },
   ];
 
   return (
-    <div className="min-h-screen bg-midnight">
-      <div className="max-w-4xl mx-auto px-6 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <h1 className="text-2xl font-bold text-white">CMS Dashboard</h1>
+    <div className="min-h-screen bg-midnight flex">
+      <div className={`fixed inset-0 bg-black/50 z-40 lg:hidden ${sidebarOpen ? 'block' : 'hidden'}`} onClick={() => setSidebarOpen(false)} />
+
+      <aside className={`fixed top-0 left-0 z-50 h-full w-64 bg-midnight-light border-r border-white/5 transform transition-transform duration-200 lg:translate-x-0 lg:static lg:z-auto ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="flex items-center justify-between h-16 px-6 border-b border-white/5">
+          <h1 className="text-lg font-bold text-white">CMS</h1>
+          <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-slate-400 hover:text-white">
+            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
+        </div>
+        <nav className="p-4 space-y-1">
+          {tabs.map((tab) => (
+            <button
+              key={tab.key}
+              onClick={() => { setActiveTab(tab.key); setSidebarOpen(false); }}
+              className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl text-sm font-medium transition-colors ${activeTab === tab.key ? 'bg-accent text-white shadow-lg shadow-accent/20' : 'text-slate-400 hover:text-white hover:bg-white/5'}`}
+            >
+              <svg className="w-5 h-5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5"><path strokeLinecap="round" strokeLinejoin="round" d={tab.icon} /></svg>
+              {tab.label}
+            </button>
+          ))}
+        </nav>
+      </aside>
+
+      <div className="flex-1 flex flex-col min-w-0">
+        <header className="h-16 flex items-center justify-between px-4 sm:px-6 border-b border-white/5 bg-midnight/80 backdrop-blur-lg sticky top-0 z-30">
+          <div className="flex items-center gap-3">
+            <button onClick={() => setSidebarOpen(true)} className="lg:hidden text-slate-400 hover:text-white">
+              <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
+            </button>
+            <h2 className="text-lg font-semibold text-white capitalize">{tabs.find((t) => t.key === activeTab)?.label}</h2>
+          </div>
           <div className="flex items-center gap-4">
             <a href="/" className="text-sm text-slate-400 hover:text-white transition-colors">View Site</a>
             <button onClick={handleLogout} className="text-sm text-slate-400 hover:text-red-400 transition-colors">Logout</button>
           </div>
-        </div>
+        </header>
 
-        <div className="flex gap-1 mb-8 p-1 rounded-xl bg-midnight-light/50 border border-white/5 w-fit">
-          {tabs.map((tab) => (
-            <button
-              key={tab.key}
-              onClick={() => setActiveTab(tab.key)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${activeTab === tab.key ? 'bg-accent text-white shadow-lg shadow-accent/20' : 'text-slate-400 hover:text-white'}`}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
-
-        <div className="p-6 rounded-2xl bg-midnight-light/30 border border-white/5 shadow-xl shadow-black/20">
-          {activeTab === 'profile' && <ProfileTab />}
-          {activeTab === 'skills' && <SkillsTab />}
-          {activeTab === 'projects' && <ProjectsTab />}
-        </div>
+        <main className="flex-1 p-4 sm:p-6 lg:p-8">
+          <div className="max-w-4xl mx-auto">
+            <div className="p-6 rounded-2xl bg-midnight-light/30 border border-white/5 shadow-xl shadow-black/20">
+              {activeTab === 'profile' && <ProfileTab />}
+              {activeTab === 'skills' && <SkillsTab />}
+              {activeTab === 'projects' && <ProjectsTab />}
+            </div>
+          </div>
+        </main>
       </div>
     </div>
   );
