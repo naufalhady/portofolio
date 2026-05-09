@@ -91,6 +91,34 @@ cd frontend && npm run dev
 3. CRUD on skills/projects via dedicated admin endpoints
 4. Frontend stores token in localStorage; backend validates via Sanctum middleware
 
+## Deployment
+
+### Frontend — Vercel (free, auto-deploy from GitHub)
+1. Push to GitHub
+2. Import repo at https://vercel.com/import
+3. Set root directory: `frontend`
+4. Add env: `NEXT_PUBLIC_API_URL=https://<backend-url>/api`
+5. Vercel auto-detects Next.js — no extra config needed
+
+### Backend — Railway (free tier, $5 credit/mo)
+1. Create account at https://railway.app
+2. New project → Deploy from GitHub → select repo
+3. Root directory: `backend`
+4. Railway auto-detects PHP via Nixpacks
+5. Add env vars in dashboard:
+   - `APP_KEY` — run `php artisan key:generate --show` locally
+   - `APP_ENV=production`
+   - `APP_DEBUG=false`
+   - `APP_URL=https://<railway-url>`
+   - `DB_CONNECTION=sqlite`
+6. Start command (set via Railway dashboard or `Procfile`):
+   `php artisan serve --host=0.0.0.0 --port=$PORT`
+7. Run `php artisan migrate --force` via Railway shell after first deploy
+
+### After deploy
+- Update `NEXT_PUBLIC_API_URL` in Vercel to point to the Railway backend URL
+- Re-deploy frontend (or Vercel auto-deploys on push)
+
 ## Recurring pitfalls
 - Deleting `app/Http/Controllers/Admin/` controllers (without `Api\` prefix) — they conflict with the correct `Api\Admin` controllers
 - Adding `then:` callback in `bootstrap/app.php` for admin routes — use `routes/api.php` instead
