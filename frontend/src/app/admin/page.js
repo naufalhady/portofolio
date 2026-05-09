@@ -273,17 +273,17 @@ export default function AdminDashboard() {
   ];
 
   return (
-    <div className="min-h-screen bg-midnight flex">
+    <div className="h-dvh bg-midnight flex overflow-hidden">
       <div className={`fixed inset-0 bg-black/50 z-40 lg:hidden ${sidebarOpen ? 'block' : 'hidden'}`} onClick={() => setSidebarOpen(false)} />
 
-      <aside className={`fixed top-0 left-0 z-50 h-full w-64 bg-midnight-light border-r border-white/5 transform transition-transform duration-200 lg:translate-x-0 lg:static lg:z-auto ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <div className="flex items-center justify-between h-16 px-6 border-b border-white/5">
+      <aside className={`fixed top-0 left-0 z-50 h-dvh w-64 bg-midnight-light border-r border-white/5 flex flex-col transform transition-transform duration-200 lg:translate-x-0 lg:static lg:z-auto ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+        <div className="flex items-center justify-between h-16 shrink-0 px-6 border-b border-white/5">
           <h1 className="text-lg font-bold text-white">CMS</h1>
           <button onClick={() => setSidebarOpen(false)} className="lg:hidden text-slate-400 hover:text-white">
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
           </button>
         </div>
-        <nav className="p-4 space-y-1">
+        <nav className="flex-1 overflow-y-auto p-4 space-y-1">
           {tabs.map((tab) => (
             <button
               key={tab.key}
@@ -297,8 +297,8 @@ export default function AdminDashboard() {
         </nav>
       </aside>
 
-      <div className="flex-1 flex flex-col min-w-0">
-        <header className="h-16 flex items-center justify-between px-4 sm:px-6 border-b border-white/5 bg-midnight/80 backdrop-blur-lg sticky top-0 z-30">
+      <div className="flex-1 flex flex-col min-w-0 h-dvh">
+        <header className="h-16 shrink-0 flex items-center justify-between px-4 sm:px-6 border-b border-white/5 bg-midnight/80 backdrop-blur-lg">
           <div className="flex items-center gap-3">
             <button onClick={() => setSidebarOpen(true)} className="lg:hidden text-slate-400 hover:text-white">
               <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2"><path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" /></svg>
@@ -311,7 +311,7 @@ export default function AdminDashboard() {
           </div>
         </header>
 
-        <main className="flex-1 p-4 sm:p-6 lg:p-8">
+        <main className="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
           <div className="max-w-4xl mx-auto">
             <div className="p-6 rounded-2xl bg-midnight-light/30 border border-white/5 shadow-xl shadow-black/20">
               {activeTab === 'profile' && <ProfileTab />}
